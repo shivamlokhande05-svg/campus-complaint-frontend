@@ -746,3 +746,21 @@ a {
   outline: none;
   border-color: var(--navy);
 }
+
+/* Sort dropdown */
+.sort-select {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--navy);
+}

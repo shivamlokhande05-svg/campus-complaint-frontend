@@ -15,11 +15,12 @@ export default function AdminDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchComplaints = async (pageNum = 1) => {
     setLoading(true);
     try {
-      const params = { page: pageNum, limit: PAGE_SIZE };
+      const params = { page: pageNum, limit: PAGE_SIZE, sortBy };
       if (filter !== "All") params.status = filter;
       if (search) params.search = search;
       const res = await api.get("/complaints/all", { params });
@@ -37,7 +38,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchComplaints(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [filter, sortBy]);
 
   // Debounced search
   const isFirstRender = React.useRef(true);
@@ -87,13 +88,25 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <input
-          type="text"
-          placeholder="Search by title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-box"
-        />
+        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="search-box"
+            style={{ marginBottom: 0, flex: 1 }}
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="sort-select"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="priority">Priority: High to Low</option>
+          </select>
+        </div>
 
         {loading ? (
           <div className="loading-text">Loading complaints...</div>

@@ -17,6 +17,7 @@ export default function StudentDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   // Duplicate-detection dialog state
   const [duplicateInfo, setDuplicateInfo] = useState(null); // { existingComplaint }
@@ -31,11 +32,11 @@ export default function StudentDashboard() {
   });
   const [image, setImage] = useState(null);
 
-  const fetchComplaints = async (pageNum = 1, searchTerm = search) => {
+  const fetchComplaints = async (pageNum = 1, searchTerm = search, sortOption = sortBy) => {
     setLoading(true);
     try {
       const res = await api.get("/complaints/my", {
-        params: { page: pageNum, limit: PAGE_SIZE, search: searchTerm || undefined },
+        params: { page: pageNum, limit: PAGE_SIZE, search: searchTerm || undefined, sortBy: sortOption },
       });
       setComplaints(res.data.complaints);
       setTotalPages(res.data.totalPages || 1);
@@ -60,11 +61,22 @@ export default function StudentDashboard() {
       return;
     }
     const timer = setTimeout(() => {
-      fetchComplaints(1, search);
+      fetchComplaints(1, search, sortBy);
     }, 400);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
+
+  // Sort changes should apply immediately, no debounce needed
+  const isFirstSortRender = React.useRef(true);
+  useEffect(() => {
+    if (isFirstSortRender.current) {
+      isFirstSortRender.current = false;
+      return;
+    }
+    fetchComplaints(1, search, sortBy);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortBy]);
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -228,13 +240,25 @@ export default function StudentDashboard() {
             <h3 style={{ marginBottom: 16, fontSize: 16 }}>
               Your complaints ({totalCount})
             </h3>
-            <input
-              type="text"
-              placeholder="Search by title..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="search-box"
-            />
+            <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+              <input
+                type="text"
+                placeholder="Search by title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="search-box"
+                style={{ marginBottom: 0, flex: 1 }}
+              />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="sort-select"
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="priority">Priority: High to Low</option>
+              </select>
+            </div>
             {loading ? (
               <div className="loading-text">Loading your complaints...</div>
             ) : complaints.length === 0 ? (

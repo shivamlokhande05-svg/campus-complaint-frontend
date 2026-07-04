@@ -16,6 +16,7 @@ export default function StudentDashboard() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] = useState("");
 
   // Duplicate-detection dialog state
   const [duplicateInfo, setDuplicateInfo] = useState(null); // { existingComplaint }
@@ -30,11 +31,11 @@ export default function StudentDashboard() {
   });
   const [image, setImage] = useState(null);
 
-  const fetchComplaints = async (pageNum = 1) => {
+  const fetchComplaints = async (pageNum = 1, searchTerm = search) => {
     setLoading(true);
     try {
       const res = await api.get("/complaints/my", {
-        params: { page: pageNum, limit: PAGE_SIZE },
+        params: { page: pageNum, limit: PAGE_SIZE, search: searchTerm || undefined },
       });
       setComplaints(res.data.complaints);
       setTotalPages(res.data.totalPages || 1);
@@ -50,6 +51,20 @@ export default function StudentDashboard() {
   useEffect(() => {
     fetchComplaints(1);
   }, []);
+
+  // Debounced search — waits 400ms after typing stops before hitting the API
+  const isFirstRender = React.useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      fetchComplaints(1, search);
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -213,6 +228,13 @@ export default function StudentDashboard() {
             <h3 style={{ marginBottom: 16, fontSize: 16 }}>
               Your complaints ({totalCount})
             </h3>
+            <input
+              type="text"
+              placeholder="Search by title..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-box"
+            />
             {loading ? (
               <div className="loading-text">Loading your complaints...</div>
             ) : complaints.length === 0 ? (

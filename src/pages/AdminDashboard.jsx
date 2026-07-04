@@ -14,12 +14,14 @@ export default function AdminDashboard() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] = useState("");
 
   const fetchComplaints = async (pageNum = 1) => {
     setLoading(true);
     try {
       const params = { page: pageNum, limit: PAGE_SIZE };
       if (filter !== "All") params.status = filter;
+      if (search) params.search = search;
       const res = await api.get("/complaints/all", { params });
       setComplaints(res.data.complaints);
       setTotalPages(res.data.totalPages || 1);
@@ -36,6 +38,20 @@ export default function AdminDashboard() {
     fetchComplaints(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
+
+  // Debounced search
+  const isFirstRender = React.useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      fetchComplaints(1);
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -70,6 +86,14 @@ export default function AdminDashboard() {
             </button>
           ))}
         </div>
+
+        <input
+          type="text"
+          placeholder="Search by title..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-box"
+        />
 
         {loading ? (
           <div className="loading-text">Loading complaints...</div>

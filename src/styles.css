@@ -728,3 +728,21 @@ a {
   background: var(--navy);
   color: white;
 }
+
+/* Search box */
+.search-box {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: var(--surface);
+  margin-bottom: 16px;
+  transition: border-color 0.15s ease;
+}
+
+.search-box:focus {
+  outline: none;
+  border-color: var(--navy);
+}

@@ -58,6 +58,12 @@ export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus }) {
         </div>
       </div>
 
+      {complaint.affectedCount > 1 && (
+        <div className="affected-badge">
+          👥 {complaint.affectedCount} students affected by this issue
+        </div>
+      )}
+
       <div className="complaint-desc">{complaint.description}</div>
 
       {complaint.imageUrl && (

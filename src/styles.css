@@ -627,3 +627,104 @@ a {
   font-size: 13.5px;
   margin-bottom: 18px;
 }
+
+/* Affected count badge */
+
+.affected-badge {
+  display: inline-block;
+  background: #eef1f8;
+  color: var(--navy);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+/* Pagination */
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-label {
+  font-size: 13px;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* Duplicate-complaint dialog */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 35, 58, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+
+.dialog-box {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 28px;
+  max-width: 440px;
+  width: 100%;
+}
+
+.dialog-box h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.dialog-box p {
+  font-size: 14px;
+  color: var(--text-soft);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dialog-actions button {
+  flex: 1;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+}
+
+.dialog-btn-secondary {
+  background: #eef1f8;
+  color: var(--ink);
+}
+
+.dialog-btn-primary {
+  background: var(--navy);
+  color: white;
+}

@@ -4,19 +4,27 @@ import Navbar from "../components/Navbar";
 import ComplaintCard from "../components/ComplaintCard";
 
 const STATUS_FILTERS = ["All", "Pending", "In Progress", "Resolved"];
+const PAGE_SIZE = 8;
 
 export default function AdminDashboard() {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchComplaints = async () => {
+  const fetchComplaints = async (pageNum = 1) => {
     setLoading(true);
     try {
-      const params = filter !== "All" ? { status: filter } : {};
+      const params = { page: pageNum, limit: PAGE_SIZE };
+      if (filter !== "All") params.status = filter;
       const res = await api.get("/complaints/all", { params });
-      setComplaints(res.data);
+      setComplaints(res.data.complaints);
+      setTotalPages(res.data.totalPages || 1);
+      setTotalCount(res.data.totalCount || 0);
+      setPage(res.data.currentPage || 1);
     } catch (err) {
       setError("Could not load complaints.");
     } finally {
@@ -25,21 +33,17 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchComplaints();
+    fetchComplaints(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const handleUpdateStatus = async (id, status) => {
     try {
       await api.put(`/complaints/${id}/status`, { status });
-      fetchComplaints();
+      fetchComplaints(page);
     } catch (err) {
       setError("Could not update status.");
     }
-  };
-
-  const counts = {
-    All: complaints.length,
   };
 
   return (
@@ -75,16 +79,42 @@ export default function AdminDashboard() {
             Nothing here — the queue for "{filter}" is empty.
           </div>
         ) : (
-          <div className="complaint-list">
-            {complaints.map((c) => (
-              <ComplaintCard
-                key={c._id}
-                complaint={c}
-                isAdmin={true}
-                onUpdateStatus={handleUpdateStatus}
-              />
-            ))}
-          </div>
+          <>
+            <p style={{ fontSize: 13, color: "var(--text-soft)", marginBottom: 14 }}>
+              {totalCount} complaint{totalCount !== 1 ? "s" : ""} in this view
+            </p>
+            <div className="complaint-list">
+              {complaints.map((c) => (
+                <ComplaintCard
+                  key={c._id}
+                  complaint={c}
+                  isAdmin={true}
+                  onUpdateStatus={handleUpdateStatus}
+                />
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <div className="pagination-row">
+                <button
+                  className="pagination-btn"
+                  disabled={page <= 1}
+                  onClick={() => fetchComplaints(page - 1)}
+                >
+                  ← Previous
+                </button>
+                <span className="pagination-label">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  className="pagination-btn"
+                  disabled={page >= totalPages}
+                  onClick={() => fetchComplaints(page + 1)}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

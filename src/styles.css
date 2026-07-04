@@ -11,6 +11,67 @@
   --text-soft: #5b6478;
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --ink: #e8ecf5;
+  --navy: #3d6aa8;
+  --navy-light: #4d7ec2;
+  --amber: #f2b862;
+  --coral: #f0776d;
+  --mint: #4bc98a;
+  --bg: #10182a;
+  --surface: #182338;
+  --border: #2a3752;
+  --text-soft: #98a3bc;
+}
+
+[data-theme="dark"] .auth-side {
+  background: linear-gradient(160deg, #0d1729 0%, #060c17 100%);
+}
+
+[data-theme="dark"] .status-btn.active-Pending,
+[data-theme="dark"] .badge-priority-High {
+  background: rgba(240, 119, 109, 0.18);
+}
+
+[data-theme="dark"] .status-btn.active-In-Progress,
+[data-theme="dark"] .badge-priority-Medium {
+  background: rgba(242, 184, 98, 0.18);
+}
+
+[data-theme="dark"] .status-btn.active-Resolved,
+[data-theme="dark"] .badge-priority-Low {
+  background: rgba(75, 201, 138, 0.18);
+}
+
+[data-theme="dark"] .badge-category {
+  background: rgba(61, 106, 168, 0.2);
+}
+
+[data-theme="dark"] .error-banner {
+  background: rgba(240, 119, 109, 0.15);
+}
+
+[data-theme="dark"] .success-banner {
+  background: rgba(75, 201, 138, 0.15);
+}
+
+[data-theme="dark"] .admin-remarks {
+  background: rgba(61, 106, 168, 0.12);
+}
+
+[data-theme="dark"] .complaint-card,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .topbar,
+[data-theme="dark"] .auth-card input,
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field select,
+[data-theme="dark"] .field textarea,
+[data-theme="dark"] .search-box,
+[data-theme="dark"] .sort-select {
+  box-shadow: none;
 }
 
 * {
@@ -148,6 +209,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
+  position: relative;
 }
 
 .auth-card {
@@ -847,4 +909,23 @@ a {
 
 .lightbox-close:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--navy);
 }

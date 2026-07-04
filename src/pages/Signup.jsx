@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Signup() {
   const [role, setRole] = useState("student");
@@ -15,6 +16,7 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
@@ -51,6 +53,14 @@ export default function Signup() {
       </div>
 
       <div className="auth-main">
+        <button
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          style={{ position: "absolute", top: 24, right: 24 }}
+          title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
         <div className="auth-card">
           <h2>Create your account</h2>
           <p className="subtitle">Choose the role that matches you.</p>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -61,6 +63,14 @@ export default function Login() {
       </div>
 
       <div className="auth-main">
+        <button
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          style={{ position: "absolute", top: 24, right: 24 }}
+          title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
         <div className="auth-card">
           <h2>Welcome back</h2>
           <p className="subtitle">Log in to file or track your complaints.</p>

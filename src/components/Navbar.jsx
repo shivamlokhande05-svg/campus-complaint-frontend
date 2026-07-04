@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const initials = user?.name
@@ -25,6 +27,13 @@ export default function Navbar() {
         Campus Fix
       </div>
       <div className="user-chip">
+        <button
+          className="theme-toggle-btn"
+          onClick={toggleTheme}
+          title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
         <div className="avatar">{initials}</div>
         <div>
           <div className="name">{user?.name}</div>

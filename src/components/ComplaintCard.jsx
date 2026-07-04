@@ -34,6 +34,7 @@ function Stepper({ status }) {
 
 export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus }) {
   const student = complaint.studentId;
+  const [lightboxOpen, setLightboxOpen] = React.useState(false);
 
   return (
     <div className="complaint-card">
@@ -67,17 +68,34 @@ export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus }) {
       <div className="complaint-desc">{complaint.description}</div>
 
       {complaint.imageUrl && (
-        <img
-          src={complaint.imageUrl}
-          alt="Complaint attachment"
-          style={{
-            marginTop: 12,
-            maxWidth: "220px",
-            borderRadius: "10px",
-            border: "1px solid var(--border)",
-            display: "block",
-          }}
-        />
+        <>
+          <div className="complaint-thumb-wrap" onClick={() => setLightboxOpen(true)}>
+            <img
+              src={complaint.imageUrl}
+              alt="Complaint attachment"
+              className="complaint-thumb"
+            />
+            <div className="complaint-thumb-hint">🔍 Click to enlarge</div>
+          </div>
+
+          {lightboxOpen && (
+            <div className="lightbox-overlay" onClick={() => setLightboxOpen(false)}>
+              <button
+                className="lightbox-close"
+                onClick={() => setLightboxOpen(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+              <img
+                src={complaint.imageUrl}
+                alt="Complaint attachment enlarged"
+                className="lightbox-image"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
+        </>
       )}
 
       <Stepper status={complaint.status} />

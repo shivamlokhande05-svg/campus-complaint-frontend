@@ -1,7 +1,8 @@
 import axios from "axios";
 
-// If your backend runs on a different port, change this URL
-const API_BASE_URL = "http://localhost:5000/api";
+// Production backend on Render. Change this if you redeploy the backend elsewhere,
+// or swap it for "http://localhost:5000/api" temporarily for local-only testing.
+const API_BASE_URL = "https://campus-complaint-backend-063e.onrender.com/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,

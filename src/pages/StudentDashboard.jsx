@@ -80,6 +80,15 @@ export default function StudentDashboard() {
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
+  const handleSubmitFeedback = async (complaintId, rating, comment) => {
+    try {
+      await api.put(`/complaints/${complaintId}/feedback`, { rating, comment });
+      fetchComplaints(page, search, sortBy);
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not submit feedback.");
+    }
+  };
+
   const resetForm = () => {
     setForm({
       title: "",
@@ -270,7 +279,12 @@ export default function StudentDashboard() {
               <>
                 <div className="complaint-list">
                   {complaints.map((c) => (
-                    <ComplaintCard key={c._id} complaint={c} isAdmin={false} />
+                    <ComplaintCard
+                      key={c._id}
+                      complaint={c}
+                      isAdmin={false}
+                      onSubmitFeedback={handleSubmitFeedback}
+                    />
                   ))}
                 </div>
                 {totalPages > 1 && (

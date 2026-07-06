@@ -32,7 +32,81 @@ function Stepper({ status }) {
   );
 }
 
-export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus }) {
+function StarRating({ value, onChange, readOnly }) {
+  const [hover, setHover] = React.useState(0);
+  const stars = [1, 2, 3, 4, 5];
+
+  return (
+    <div className="star-rating" style={{ pointerEvents: readOnly ? "none" : "auto" }}>
+      {stars.map((n) => (
+        <span
+          key={n}
+          className={`star ${n <= (hover || value) ? "star-filled" : ""}`}
+          onClick={() => !readOnly && onChange(n)}
+          onMouseEnter={() => !readOnly && setHover(n)}
+          onMouseLeave={() => !readOnly && setHover(0)}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function FeedbackSection({ complaint, isAdmin, onSubmitFeedback }) {
+  const [rating, setRating] = React.useState(0);
+  const [comment, setComment] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
+
+  if (complaint.status !== "Resolved") return null;
+
+  // Already rated — show it as read-only (both student and admin see this)
+  if (complaint.rating) {
+    return (
+      <div className="feedback-box feedback-given">
+        <div className="feedback-label">
+          {isAdmin ? "Student feedback" : "Your feedback"}
+        </div>
+        <StarRating value={complaint.rating} onChange={() => {}} readOnly />
+        {complaint.feedbackComment && (
+          <p className="feedback-comment">"{complaint.feedbackComment}"</p>
+        )}
+      </div>
+    );
+  }
+
+  // Admin never gets to submit feedback, only view it once given
+  if (isAdmin) return null;
+
+  const handleSubmit = async () => {
+    if (rating === 0) return;
+    setSubmitting(true);
+    await onSubmitFeedback(complaint._id, rating, comment);
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="feedback-box">
+      <div className="feedback-label">How was this resolved?</div>
+      <StarRating value={rating} onChange={setRating} />
+      <textarea
+        className="feedback-textarea"
+        placeholder="Add a comment (optional)"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+      />
+      <button
+        className="feedback-submit-btn"
+        onClick={handleSubmit}
+        disabled={rating === 0 || submitting}
+      >
+        {submitting ? "Submitting..." : "Submit feedback"}
+      </button>
+    </div>
+  );
+}
+
+export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus, onSubmitFeedback }) {
   const student = complaint.studentId;
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
 
@@ -105,6 +179,12 @@ export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus }) {
           <strong>Note from admin:</strong> {complaint.adminRemarks}
         </div>
       )}
+
+      <FeedbackSection
+        complaint={complaint}
+        isAdmin={isAdmin}
+        onSubmitFeedback={onSubmitFeedback}
+      />
 
       {isAdmin && (
         <div className="status-select-row">

@@ -55,9 +55,9 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  const handleUpdateStatus = async (id, status) => {
+  const handleUpdateStatus = async (id, status, adminRemarks) => {
     try {
-      await api.put(`/complaints/${id}/status`, { status });
+      await api.put(`/complaints/${id}/status`, { status, adminRemarks });
       fetchComplaints(page);
     } catch (err) {
       setError("Could not update status.");

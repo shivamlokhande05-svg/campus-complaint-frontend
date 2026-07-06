@@ -109,6 +109,21 @@ function FeedbackSection({ complaint, isAdmin, onSubmitFeedback }) {
 export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus, onSubmitFeedback }) {
   const student = complaint.studentId;
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
+  const [pendingStatus, setPendingStatus] = React.useState(null);
+  const [remarks, setRemarks] = React.useState(complaint.adminRemarks || "");
+  const [saving, setSaving] = React.useState(false);
+
+  const openStatusDialog = (step) => {
+    setRemarks(complaint.adminRemarks || "");
+    setPendingStatus(step);
+  };
+
+  const confirmStatusChange = async () => {
+    setSaving(true);
+    await onUpdateStatus(complaint._id, pendingStatus, remarks);
+    setSaving(false);
+    setPendingStatus(null);
+  };
 
   return (
     <div className="complaint-card">
@@ -194,11 +209,46 @@ export default function ComplaintCard({ complaint, isAdmin, onUpdateStatus, onSu
               className={`status-btn ${
                 complaint.status === step ? `active-${step.replace(" ", "-")}` : ""
               }`}
-              onClick={() => onUpdateStatus(complaint._id, step)}
+              onClick={() => openStatusDialog(step)}
             >
               Mark {step}
             </button>
           ))}
+        </div>
+      )}
+
+      {pendingStatus && (
+        <div className="dialog-overlay" onClick={() => setPendingStatus(null)}>
+          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+            <h3>Mark as {pendingStatus}</h3>
+            <p>
+              Add a note for the student about this update (optional) — they'll see
+              it on their dashboard.
+            </p>
+            <textarea
+              className="feedback-textarea"
+              placeholder="e.g. Technician assigned, will fix by evening"
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+              autoFocus
+            />
+            <div className="dialog-actions" style={{ marginTop: 14 }}>
+              <button
+                className="dialog-btn-secondary"
+                onClick={() => setPendingStatus(null)}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                className="dialog-btn-primary"
+                onClick={confirmStatusChange}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : `Confirm: ${pendingStatus}`}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
